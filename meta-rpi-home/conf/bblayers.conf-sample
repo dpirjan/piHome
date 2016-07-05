@@ -1,0 +1,30 @@
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+	${HOME}/WORK/RPi/piHome/meta \
+	${HOME}/WORK/RPi/piHome/meta-poky \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-oe \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-multimedia \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-networking \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-python \
+	${HOME}/WORK/RPi/piHome/meta-qt5 \
+	${HOME}/WORK/RPi/piHome/meta-raspberrypi \
+	${HOME}/WORK/RPi/piHome/meta-rpi-home \
+"
+
+BBLAYERS_NON_REMOVABLE ?= " \
+	${HOME}/WORK/RPi/piHome/meta \
+	${HOME}/WORK/RPi/piHome/meta-poky \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-oe \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-multimedia \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-networking \
+	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-python \
+	${HOME}/WORK/RPi/piHome/meta-qt5 \
+	${HOME}/WORK/RPi/piHome/meta-raspberrypi \
+	${HOME}/WORK/RPi/piHome/meta-rpi-home \
+"
