@@ -1,30 +1,33 @@
-# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# LAYER_CONF_VERSION is increased each time build/conf/bblayers.conf
 # changes incompatibly
-POKY_BBLAYERS_CONF_VERSION = "2"
+LCONF_VERSION = "6"
 
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
+POKYROOT = "/home/azanosch/WORK/RPi/piHome"
+
 BBLAYERS ?= " \
-	${HOME}/WORK/RPi/piHome/meta \
-	${HOME}/WORK/RPi/piHome/meta-poky \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-oe \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-multimedia \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-networking \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-python \
-	${HOME}/WORK/RPi/piHome/meta-qt5 \
-	${HOME}/WORK/RPi/piHome/meta-raspberrypi \
-	${HOME}/WORK/RPi/piHome/meta-rpi-home \
+	${POKYROOT}/poky/meta \
+    ${POKYROOT}/poky/meta-yocto \
+    ${POKYROOT}/poky/meta-yocto-bsp \
+	${POKYROOT}/meta-openembedded/meta-oe \
+	${POKYROOT}/meta-openembedded/meta-multimedia \
+	${POKYROOT}/meta-openembedded/meta-networking \
+	${POKYROOT}/meta-openembedded/meta-python \
+	${POKYROOT}/meta-qt5 \
+	${POKYROOT}/meta-raspberrypi \
+	${POKYROOT}/meta-rpi-home \
 "
 
 BBLAYERS_NON_REMOVABLE ?= " \
-	${HOME}/WORK/RPi/piHome/meta \
-	${HOME}/WORK/RPi/piHome/meta-poky \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-oe \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-multimedia \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-networking \
-	${HOME}/WORK/RPi/piHome/meta-openembedded/meta-python \
-	${HOME}/WORK/RPi/piHome/meta-qt5 \
-	${HOME}/WORK/RPi/piHome/meta-raspberrypi \
-	${HOME}/WORK/RPi/piHome/meta-rpi-home \
+	${POKYROOT}/poky/meta \
+    ${POKYROOT}/poky/meta-yocto \
+	${POKYROOT}/meta-openembedded/meta-oe \
+	${POKYROOT}/meta-openembedded/meta-multimedia \
+	${POKYROOT}/meta-openembedded/meta-networking \
+	${POKYROOT}/meta-openembedded/meta-python \
+	${POKYROOT}/meta-qt5 \
+	${POKYROOT}/meta-raspberrypi \
+	${POKYROOT}/meta-rpi-home \
 "
