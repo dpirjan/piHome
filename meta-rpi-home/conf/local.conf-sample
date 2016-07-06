@@ -7,7 +7,7 @@ PREFERRED_PROVIDER_jpeg-native = "libjpeg-turbo-native"
 IMAGE_FSTYPES = "tar.gz"
 
 # the default is 4.1.x
-PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
+PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
 
 MACHINE = "raspberrypi2"
 
