@@ -7,7 +7,6 @@ IMAGE_INSTALL += " \
 	\
 	packagegroup-core-boot \
 	packagegroup-core-full-cmdline \
-	zlib \
 	userland \
 	\
 	cairo \
@@ -17,45 +16,27 @@ IMAGE_INSTALL += " \
 	libdrm \
 	libinput \
 	\
-	gstreamer \
-	gst-meta-video \
-	gst-plugins-base \
-	gst-plugins-base-app \
-	gst-plugins-good \
-	gst-plugins-good-video4linux2 \
-	\
 	qtbase \
 	qtbase-fonts \
 	qtbase-plugins \
 	qtbase-tools \
-	qtconnectivity \
-	qtconnectivity-qmlplugins \
 	qtdeclarative \
 	qtdeclarative-plugins \
 	qtdeclarative-qmlplugins \
 	qtdeclarative-tools \
 	qtgraphicaleffects-qmlplugins \
 	qtimageformats-plugins \
-	qtmultimedia \
-	qtmultimedia-plugins \
-	qtmultimedia-qmlplugins \
-	qtquickcontrols-qmlplugins \
 	qtscript \
 	qtsensors \
 	qtsensors-plugins \
 	qtsensors-qmlplugins \
 	qtsvg \
 	qtsvg-plugins \
-	qtsystems \
-	qtsystems-tools \
-	qtsystems-qmlplugins \
 	qtwebchannel \
 	qtwebchannel-qmlplugins \
 	qtwebsockets \
 	qtwebsockets-qmlplugins \
-	qtxmlpatterns \
-	qtwebkit \
-	qtwebkit-qmlplugins \
+	\
 	qtsmarthome \
 	qt5everywheredemo \
 	cinematicexperience \
