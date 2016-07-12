@@ -1,1 +1,12 @@
 This is a metadata repository for home automation project based on meta-raspberrypi.
+
+In order to start a fresh build just invoke the startBuild.sh script by typing
+in the command line: ". ./startBuild.sh".
+
+The script will take the build directory name as a parameter, if not will create
+a new one containing the current timestamp (for example: rpi-build-yyyy-mm-dd).
+
+The bblayers and local configuration file samples will be copied to the conf
+directory for the build. The bblayers will be also modified with the correct paths.
+
+The last step will be to invoke bitbake for the rpi-home-image.
