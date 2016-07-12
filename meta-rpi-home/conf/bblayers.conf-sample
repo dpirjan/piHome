@@ -5,29 +5,27 @@ LCONF_VERSION = "6"
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
-POKYROOT = "/home/azanosch/WORK/RPi/piHome"
-
 BBLAYERS ?= " \
-	${POKYROOT}/poky/meta \
-    ${POKYROOT}/poky/meta-yocto \
-    ${POKYROOT}/poky/meta-yocto-bsp \
-	${POKYROOT}/meta-openembedded/meta-oe \
-	${POKYROOT}/meta-openembedded/meta-multimedia \
-	${POKYROOT}/meta-openembedded/meta-networking \
-	${POKYROOT}/meta-openembedded/meta-python \
-	${POKYROOT}/meta-qt5 \
-	${POKYROOT}/meta-raspberrypi \
-	${POKYROOT}/meta-rpi-home \
+	##OEROOT##/poky/meta \
+	##OEROOT##/poky/meta-yocto \
+	##OEROOT##/poky/meta-yocto-bsp \
+	##OEROOT##/meta-openembedded/meta-oe \
+	##OEROOT##/meta-openembedded/meta-multimedia \
+	##OEROOT##/meta-openembedded/meta-networking \
+	##OEROOT##/meta-openembedded/meta-python \
+	##OEROOT##/meta-qt5 \
+	##OEROOT##/meta-raspberrypi \
+	##OEROOT##/meta-rpi-home \
 "
 
 BBLAYERS_NON_REMOVABLE ?= " \
-	${POKYROOT}/poky/meta \
-    ${POKYROOT}/poky/meta-yocto \
-	${POKYROOT}/meta-openembedded/meta-oe \
-	${POKYROOT}/meta-openembedded/meta-multimedia \
-	${POKYROOT}/meta-openembedded/meta-networking \
-	${POKYROOT}/meta-openembedded/meta-python \
-	${POKYROOT}/meta-qt5 \
-	${POKYROOT}/meta-raspberrypi \
-	${POKYROOT}/meta-rpi-home \
+	##OEROOT##/poky/meta \
+	##OEROOT##/poky/meta-yocto \
+	##OEROOT##/meta-openembedded/meta-oe \
+	##OEROOT##/meta-openembedded/meta-multimedia \
+	##OEROOT##/meta-openembedded/meta-networking \
+	##OEROOT##/meta-openembedded/meta-python \
+	##OEROOT##/meta-qt5 \
+	##OEROOT##/meta-raspberrypi \
+	##OEROOT##/meta-rpi-home \
 "
