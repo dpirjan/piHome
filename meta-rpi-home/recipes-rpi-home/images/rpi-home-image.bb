@@ -1,4 +1,7 @@
 # Base this image on core-image-minimal
+# PACKAGES TO BE ADDED:
+#raspi-config
+
 include recipes-core/images/core-image-minimal.bb
 
 # Include modules in rootfs
@@ -7,6 +10,7 @@ IMAGE_INSTALL += " \
 	\
 	packagegroup-core-boot \
 	packagegroup-core-full-cmdline \
+	\
 	userland \
 	\
 	cairo \
@@ -16,30 +20,13 @@ IMAGE_INSTALL += " \
 	libdrm \
 	libinput \
 	\
-	qtbase \
-	qtbase-fonts \
-	qtbase-plugins \
-	qtbase-tools \
-	qtdeclarative \
-	qtdeclarative-plugins \
-	qtdeclarative-qmlplugins \
-	qtdeclarative-tools \
-	qtgraphicaleffects-qmlplugins \
-	qtimageformats-plugins \
-	qtscript \
-	qtsensors \
-	qtsensors-plugins \
-	qtsensors-qmlplugins \
-	qtsvg \
-	qtsvg-plugins \
-	qtwebchannel \
-	qtwebchannel-qmlplugins \
-	qtwebsockets \
-	qtwebsockets-qmlplugins \
+	openssh-sftp-server \
 	\
-	qtsmarthome \
-	qt5everywheredemo \
-	cinematicexperience \
+	dbus \
+	\
+	packagegroup-qt5 \
+	\
+	packagegroup-qt5-demos \
 	\
 	wiringpi \
 	\
