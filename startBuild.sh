@@ -2,6 +2,16 @@
 
 clear
 
+SCRIPT_NAME="startBuild.sh"
+
+# Check that it was sourced
+cmd=$(basename "$0")
+[ "$cmd" = "$SCRIPT_NAME" ] && {
+	echo "No, the script $SCRIPT_NAME needs to be _sourced_ from your current shell."
+	echo "Use source $cmd  or  . ./$cmd"
+	exit 1
+}
+
 if [ $# -eq 0 ]; 
 then
 	echo "No parameter provided to the script"
