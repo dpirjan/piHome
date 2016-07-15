@@ -30,6 +30,9 @@ IMAGE_INSTALL += " \
 	\
 	wiringpi \
 	\
+	rf24 \
+	rf24-network \
+	\
 "
 
 SPLASH = "psplash-raspberrypi"
