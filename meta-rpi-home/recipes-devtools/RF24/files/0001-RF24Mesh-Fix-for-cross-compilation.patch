@@ -1,0 +1,153 @@
+From bd0dbd8c83b7181a31159135261a09a2224c929d Mon Sep 17 00:00:00 2001
+From: Aurelian Zanoschi <aurelian17@gmail.com>
+Date: Sun, 17 Jul 2016 23:05:54 +0300
+Subject: [PATCH] RF24Mesh: Fix for cross compilation
+
+In the current shape, the Makefile provided with the RF24Mesh
+package cannot be cross compiled. PREFIX was provided as an
+environment variable. The examples are installed in EXAMPLE_DIR.
+For the compilation of examples for raspberrypi the SYSROOT_DIR
+needed to be provided in order to be able to link the executables
+with the RF24 and RF24-Network libraries.
+
+Signed-off-by: Aurelian Zanoschi <aurelian17@gmail.com>
+---
+ Makefile              | 29 ++++++++++++++---------------
+ examples_RPi/Makefile | 33 +++++++++++++++++----------------
+ 2 files changed, 31 insertions(+), 31 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index aaf09c2..48b5a3a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,7 +10,7 @@
+ # use make all and make install to install the library 
+ # You can change the install directory by editing the LIBDIR line
+ #
+-PREFIX=/usr/local
++#PREFIX=/usr/local
+ 
+ # Library parameters
+ # where to put the lib
+@@ -22,22 +22,22 @@ LIBNAME_RFN=$(LIB_RFN).so.1.0
+ 
+ HEADER_DIR=${PREFIX}/include/RF24Mesh
+ 
+-ARCH=armv6zk
+-ifeq "$(shell uname -m)" "armv7l"
+-ARCH=armv7-a
+-endif
++#ARCH=armv6zk
++#ifeq "$(shell uname -m)" "armv7l"
++#ARCH=armv7-a
++#endif
+ 
+ # Detect the Raspberry Pi from cpuinfo
+ #Count the matches for BCM2708 or BCM2709 in cpuinfo
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
+-ifneq "${RPI}" "1"
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
+-endif
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
++#ifneq "${RPI}" "1"
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
++#endif
+ 
+-ifeq "$(RPI)" "1"
++#ifeq "$(RPI)" "1"
+ # The recommended compiler flags for the Raspberry Pi
+-CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s -std=c++0x
+-endif
++CCFLAGS=${CFLAGS} -Ofast -std=c++0x
++#endif
+ 
+ # make all
+ # reinstall the library after each recompilation
+@@ -45,11 +45,11 @@ all: librf24mesh
+ 
+ # Make the library
+ librf24mesh: RF24Mesh.o
+-	g++ -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
++	$(CXX) -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
+ 
+ # Library parts
+ RF24Mesh.o: RF24Mesh.cpp
+-	g++ -Wall -fPIC ${CCFLAGS} -c $^
++	$(CXX) -Wall -fPIC ${CCFLAGS} -c $^
+ 
+ # clear build files
+ clean:
+@@ -65,7 +65,6 @@ install-libs:
+ 	@install -m 0755 ${LIBNAME_RFN} ${LIBDIR}
+ 	@ln -sf ${LIBDIR}/${LIBNAME_RFN} ${LIBDIR}/${LIB_RFN}.so.1
+ 	@ln -sf ${LIBDIR}/${LIBNAME_RFN} ${LIBDIR}/${LIB_RFN}.so
+-	@ldconfig
+ 
+ install-headers:
+ 	@echo "[Installing Headers]"
+diff --git a/examples_RPi/Makefile b/examples_RPi/Makefile
+index fff4edb..da8e3c6 100644
+--- a/examples_RPi/Makefile
++++ b/examples_RPi/Makefile
+@@ -10,24 +10,26 @@
+ # use make all and make install to install the examples
+ # You can change the install directory by editing the prefix line
+ #
+-prefix := /usr/local
++prefix := ${PREFIX}
++HEADER_DIR=${PREFIX}/include
++LIBDIR=${PREFIX}/lib
+ 
+-ARCH=armv6zk
+-ifeq "$(shell uname -m)" "armv7l"
+-ARCH=armv7-a
+-endif
++#ARCH=armv6zk
++#ifeq "$(shell uname -m)" "armv7l"
++#ARCH=armv7-a
++#endif
+ 
+ # Detect the Raspberry Pi from cpuinfo
+ #Count the matches for BCM2708 or BCM2709 in cpuinfo
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
+-ifneq "${RPI}" "1"
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
+-endif
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
++#ifneq "${RPI}" "1"
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
++#endif
+ 
+-ifeq "$(RPI)" "1"
++#ifeq "$(RPI)" "1"
+ # The recommended compiler flags for the Raspberry Pi
+-CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s -std=c++0x
+-endif
++CCFLAGS=${CFLAGS} -Ofast -std=c++0x
++#endif
+ 
+ # define all programs
+ PROGRAMS = RF24Mesh_Example_Master RF24Mesh_Example
+@@ -36,16 +38,15 @@ SOURCES = ${PROGRAMS:=.cpp}
+ all: ${PROGRAMS}
+ 
+ ${PROGRAMS}: ${SOURCES}
+-	g++ ${CCFLAGS} -Wall -I../ -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
++	$(CXX) ${CCFLAGS} -Wall -I${HEADER_DIR} $@.cpp -L${LIBDIR} -L${SYSROOT_DIR} -lrf24-bcm -lrf24network -lrf24mesh -o $@
+ 
+ clean:
+ 	rm -rf $(PROGRAMS)
+ 	
+ install: all
+-	test -d $(prefix) || mkdir $(prefix)
+-	test -d $(prefix)/bin || mkdir $(prefix)/bin
++	test -d ${EXAMPLE_DIR} || mkdir ${EXAMPLE_DIR}
+ 	for prog in $(PROGRAMS); do \
+-	  install -m 0755 $$prog $(prefix)/bin; \
++	  install -m 0755 $$prog ${EXAMPLE_DIR}; \
+ 	done
+ 
+ .PHONY: install
+-- 
+1.9.1
+
