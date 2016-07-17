@@ -141,7 +141,7 @@ index 0b77c46..590c1ed 100644
  install: all
 -	test -d $(prefix) || mkdir $(prefix)
 -	test -d $(prefix)/bin || mkdir $(prefix)/bin
-+	test -d ${EXAMPLES_DIR} || mkdir ${EXAMPLE_DIR}
++	test -d ${EXAMPLE_DIR} || mkdir ${EXAMPLE_DIR}
  	for prog in $(PROGRAMS); do \
 -	  install -m 0755 $$prog $(prefix)/bin; \
 +	  install -m 0755 $$prog ${EXAMPLE_DIR}; \
