@@ -44,6 +44,11 @@ do_compile_append() {
 }
 
 do_install() {
+	oe_runmake install
+	cd ${S}/examples_linux
+	oe_runmake install
+	cd ${S}/examples_linux/interrupts
+	oe_runmake install
 }
 
 FILES_${PN}-dbg += "${datadir}/${PN}/.debug"
