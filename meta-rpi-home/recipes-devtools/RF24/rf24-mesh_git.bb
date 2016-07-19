@@ -10,7 +10,7 @@ SRCREV = "ce3531454b5ca14c83684029e1405dc833bffe93"
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://git@github.com/TMRh20/RF24Mesh.git;protocol=ssh;branch=${SRCBRANCH} \
-	file://0001-RF24Mesh-Fix-for-cross-compilation.patch \
+	file://0001-RF24Mesh-Fix-cross-compilation.patch \
 "
 
 inherit autotools-brokensep
@@ -19,22 +19,36 @@ DEPENDS += " \
 	rf24 \
 	rf24-network \
 "
+
+INSANE_SKIP_rf24-mesh += "dev-deps"
+
 EXTRA_OEMAKE = " \
 	PREFIX=${D}/usr \
 	EXAMPLE_DIR=${D}${datadir}/${PN} \
-	SYSROOT_DIR=${STAGING_DIR_HOST} \
 "
 
-do_compile_append() {
-	mkdir -p ${D}${includedir}/RF24Mesh
-	mkdir -p ${D}${libdir}
-	mkdir -p ${D}${datadir}/${PN}
-	oe_runmake install
+do_compile() {
+	install -d ${D}${includedir}/RF24Mesh
+	install -d ${D}${libdir}
+	oe_runmake all
+	install -m 0755 ${S}/librf24mesh.so.1.0 ${D}${libdir}
+	ln -sf librf24mesh.so.1.0 ${D}${libdir}/librf24mesh.so
+	ln -sf librf24mesh.so.1.0 ${D}${libdir}/librf24mesh.so.1
+	install -m 0644 ${S}/*.h ${D}${includedir}/RF24Mesh
 	cd ${S}/examples_RPi
-	oe_runmake install
+	oe_runmake all
 }
 
 do_install() {
+	install -d ${D}${includedir}/RF24Mesh
+	install -d ${D}${libdir}
+	install -d ${D}${datadir}/${PN}
+	install -m 0755 ${S}/librf24mesh.so.1.0 ${D}${libdir}
+	ln -sf librf24mesh.so.1.0 ${D}${libdir}/librf24mesh.so
+	ln -sf librf24mesh.so.1.0 ${D}${libdir}/librf24mesh.so.1
+	install -m 0644 ${S}/*.h ${D}${includedir}/RF24Mesh
+	install -m 755 ${S}/examples_RPi/RF24Mesh_Example ${D}${datadir}/${PN}
+	install -m 755 ${S}/examples_RPi/RF24Mesh_Example_Master ${D}${datadir}/${PN}
 }
 
 FILES_${PN}-dbg += "${datadir}/${PN}/.debug"

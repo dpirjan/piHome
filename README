@@ -1,13 +1,37 @@
-This is a metadata repository for home automation project based on meta-raspberrypi.
+This is a metadata repository for a home automation / home security project 
+based on meta-raspberrypi layer. The raspberrypi with the waveshare 7inch HDMI
+capacitive display is used. For communication the NRF24L01+ modules are used,
+making possible to pair the raspberrypi (master) with some ATMega328P 
+microcontrollers that have the sensors on GPIO. Communication with the NRF24L01+
+modules is done via SPI bus with the RF24/RF24Network/RF24Mesh libraries from
+https://tmrh20.github.io/RF24/.
+The master node (raspberrypi) can also have some wired sensors attached. The
+interface with these sensors is done via GPIO by using the wiringPi library.
+The intention is that this project uses some Qt5 interface for linking all the
+parts together.
 
-In order to start a fresh build just invoke the startBuild.sh script by typing
-in the command line: ". ./startBuild.sh" or "source ./startBuild.sh"
+
+In order to start a fresh build after cloning the repository just invoke the
+startBuild.sh script by typing in the command line:
+
+". ./startBuild.sh" or "source ./startBuild.sh"
+
 
 The script will take the build directory name as a parameter, if not will create
 a new one containing the current timestamp one directory above the piHome layer.
 For example: rpi-build-yyyy-mm-dd.
 
+
 The bblayers and local configuration file samples will be copied to the conf
-directory for the build. The bblayers will be also modified with the correct paths.
+directory for the build new build. The bblayers will be also modified with
+the correct paths.
+
 
 The last step will be to invoke bitbake for the rpi-home-image.
+
+
+The last two steps will be executed if there is no build directory specified. In
+the other case no configuration file will be copied, nor the bitbake command on
+the rpi-home-image will be executed. Script considers the user wants to initialize
+the build environment in an older build directory and no further configuration will
+be done.

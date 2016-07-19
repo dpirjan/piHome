@@ -33,9 +33,9 @@ do_configure_append() {
 }
 
 do_compile_append() {
-	mkdir -p ${D}${libdir}
-	mkdir -p ${D}${includedir}
-	mkdir -p ${D}${datadir}/${P}
+	install -d ${D}${libdir}
+	install -d ${D}${includedir}
+	install -d ${D}${datadir}/${P}
 	oe_runmake install
 	cd ${S}/examples_linux
 	oe_runmake all

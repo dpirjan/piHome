@@ -20,9 +20,9 @@ IMAGE_INSTALL += " \
 	libdrm \
 	libinput \
 	\
-	openssh-sftp-server \
-	\
 	dbus \
+	\
+	openssh-sftp-server \
 	\
 	packagegroup-qt5 \
 	\
@@ -32,9 +32,15 @@ IMAGE_INSTALL += " \
 	\
 	rf24 \
 	rf24-network \
+	rf24-mesh \
+	\
+	gdb \
 	\
 "
 
 SPLASH = "psplash-raspberrypi"
 
 IMAGE_FEATURES += "ssh-server-dropbear splash"
+
+# Add extra 1Gb space to the rootfs image
+IMAGE_ROOTFS_EXTRA_SPACE_append += "+ 1048576"
