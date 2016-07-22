@@ -1,4 +1,4 @@
-DESCRIPTION = "Optimized library for implementation of OSI Network Layer with nRF24L01(+) radios driven by the newly optimized RF24 library fork."
+DESCRIPTION = "Recipe for compiling the examples from the RF24-network library package."
 HOMEPAGE = "http://tmrh20.github.io/RF24Network/"
 SECTION = "devel/libs"
 LICENSE = "GPLv2"
@@ -19,12 +19,6 @@ DEPENDS += " \
 "
 
 inherit autotools-brokensep
-
-DEPENDS += " \
-	rf24 \
-"
-
-INSANE_SKIP_rf24-network += "dev-deps"
 
 EXTRA_OEMAKE = " \
 	PREFIX=${D}/usr \

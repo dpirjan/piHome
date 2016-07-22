@@ -19,8 +19,6 @@ DEPENDS += " \
 	rf24 \
 "
 
-INSANE_SKIP_rf24-network += "dev-deps"
-
 EXTRA_OEMAKE = " \
 	PREFIX=${D}/usr \
 "
