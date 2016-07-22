@@ -12,6 +12,7 @@ S = "${WORKDIR}/git"
 SRC_URI = "git://git@github.com/TMRh20/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
 
 LIBNAME = "librf24.so.1.1.6"
+LIBDEPRECATE = "librf24-bcm.so"
 ARCH_DIR = "utility"
 DRIVER_DIR = "utility/RPi"
 
@@ -44,6 +45,7 @@ do_install() {
 	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1.1
 	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1
 	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so
+	ln -sf ${LIBNAME} ${D}${libdir}/${LIBDEPRECATE}
 	install -m 644 *.h ${D}${includedir}/RF24
 	install -m 644 ${DRIVER_DIR}/*.h ${D}${includedir}/RF24/${DRIVER_DIR}
 	install -m 644 ${ARCH_DIR}/*.h ${D}${includedir}/RF24/${ARCH_DIR}
