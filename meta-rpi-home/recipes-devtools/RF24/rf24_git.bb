@@ -11,6 +11,10 @@ S = "${WORKDIR}/git"
 
 SRC_URI = "git://git@github.com/TMRh20/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
 
+LIBNAME = "librf24.so.1.1.6"
+ARCH_DIR = "utility"
+DRIVER_DIR = "utility/RPi"
+
 inherit autotools-brokensep
 
 EXTRA_OECONF = " \
@@ -20,11 +24,12 @@ EXTRA_OECONF = " \
 	--prefix=${prefix} \
 	--lib-dir=${D}${libdir} \
 	--header-dir=${D}${includedir}/RF24 \
-	--examples-dir=${D}${datadir}/${PN} \
 	--ldconfig='' \
 	--with-libtool-sysroot=${STAGING_DIR_HOST} \
 	--no-clean \
 "
+
+EXTRA_OECONF_append_raspberrypi += "--driver=RPi --soc=BCM2835"
 EXTRA_OECONF_append_raspberrypi2 += "--driver=RPi --soc=BCM2835"
 EXTRA_OECONF_append_raspberrypi3 += "--driver=RPi --soc=BCM2836"
 
@@ -32,24 +37,14 @@ do_configure_append() {
 	cp ${S}/utility/RPi/includes.h ${S}/utility
 }
 
-do_compile_append() {
-	install -d ${D}${libdir}
-	install -d ${D}${includedir}
-	install -d ${D}${datadir}/${P}
-	oe_runmake install
-	cd ${S}/examples_linux
-	oe_runmake all
-	cd ${S}/examples_linux/interrupts
-	oe_runmake all
-}
-
 do_install() {
-	oe_runmake install
-	cd ${S}/examples_linux
-	oe_runmake install
-	cd ${S}/examples_linux/interrupts
-	oe_runmake install
+	install -d ${D}${libdir}
+	install -d ${D}${includedir}/RF24/${DRIVER_DIR}
+	install -m 0755 ${LIBNAME} ${D}${libdir}
+	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1.1
+	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1
+	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so
+	install -m 644 *.h ${D}${includedir}/RF24
+	install -m 644 ${DRIVER_DIR}/*.h ${D}${includedir}/RF24/${DRIVER_DIR}
+	install -m 644 ${ARCH_DIR}/*.h ${D}${includedir}/RF24/${ARCH_DIR}
 }
-
-FILES_${PN}-dbg += "${datadir}/${PN}/.debug"
-FILES_${PN} += "${datadir}"
