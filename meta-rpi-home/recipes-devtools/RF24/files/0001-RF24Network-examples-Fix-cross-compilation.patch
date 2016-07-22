@@ -1,0 +1,80 @@
+From c3d193875096dc20e9133eb0e5240a1e02db4123 Mon Sep 17 00:00:00 2001
+From: Aurelian Zanoschi <aurelian17@gmail.com>
+Date: Fri, 22 Jul 2016 23:22:34 +0300
+Subject: [PATCH] RF24Network-examples Fix cross compilation
+
+In the current shape, the Makefile provided with the RF24Network
+package cannot be cross compiled. PREFIX was provided as an
+environment variable.
+
+The examples are installed in EXAMPLE_DIR.
+
+Signed-off-by: Aurelian Zanoschi <aurelian17@gmail.com>
+---
+ examples_RPi/Makefile | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/examples_RPi/Makefile b/examples_RPi/Makefile
+index 0b77c46..639df17 100644
+--- a/examples_RPi/Makefile
++++ b/examples_RPi/Makefile
+@@ -11,24 +11,24 @@
+ # use make all and make install to install the examples
+ # You can change the install directory by editing the prefix line
+ #
+-prefix := /usr/local
++prefix := ${PREFIX}
+ 
+-ARCH=armv6zk
+-ifeq "$(shell uname -m)" "armv7l"
+-ARCH=armv7-a
+-endif
++#ARCH=armv6zk
++#ifeq "$(shell uname -m)" "armv7l"
++#ARCH=armv7-a
++#endif
+ 
+ # Detect the Raspberry Pi from cpuinfo
+ #Count the matches for BCM2708 or BCM2709 in cpuinfo
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
+-ifneq "${RPI}" "1"
+-RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
+-endif
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
++#ifneq "${RPI}" "1"
++#RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
++#endif
+ 
+-ifeq "$(RPI)" "1"
++#ifeq "$(RPI)" "1"
+ # The recommended compiler flags for the Raspberry Pi
+-CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s -std=c++0x
+-endif
++CCFLAGS=${CXXFLAGS} -Ofast -std=c++0x
++#endif
+ 
+ 
+ # define all programs
+@@ -38,16 +38,15 @@ SOURCES = ${PROGRAMS:=.cpp}
+ all: ${PROGRAMS}
+ 
+ ${PROGRAMS}: ${SOURCES}
+-	g++ ${CCFLAGS} -Wall -I../ $@.cpp -lrf24-bcm -lrf24network -o $@
++	$(CXX) ${CCFLAGS} -Wall -I${PREFIX}/include $@.cpp -L${PREFIX}/lib -lrf24-bcm -lrf24network -o $@
+ 
+ clean:
+ 	rm -rf $(PROGRAMS)
+ 
+ install: all
+-	test -d $(prefix) || mkdir $(prefix)
+-	test -d $(prefix)/bin || mkdir $(prefix)/bin
++	test -d ${EXAMPLE_DIR} || mkdir -p ${EXAMPLE_DIR}
+ 	for prog in $(PROGRAMS); do \
+-	  install -m 0755 $$prog $(prefix)/bin; \
++	  install -m 0755 $$prog ${EXAMPLE_DIR}; \
+ 	done
+ 
+ .PHONY: install
+-- 
+1.9.1
+
