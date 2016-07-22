@@ -23,34 +23,12 @@ INSANE_SKIP_rf24-network += "dev-deps"
 
 EXTRA_OEMAKE = " \
 	PREFIX=${D}/usr \
-	EXAMPLE_DIR=${D}${datadir}/${PN} \
 "
-
-do_compile() {
-	install -d ${D}${includedir}/RF24Network
-	install -d ${D}${libdir}
-	oe_runmake all
-	install -m 0755 ${S}/librf24network.so.1.0 ${D}${libdir}
-	ln -sf librf24network.so.1.0 ${D}${libdir}/librf24network.so
-	ln -sf librf24network.so.1.0 ${D}${libdir}/librf24network.so.1
-	install -m 0644 ${S}/*.h ${D}${includedir}/RF24Network
-	cd ${S}/examples_RPi
-	oe_runmake all
-}
-
 do_install() {
 	install -d ${D}${includedir}/RF24Network
 	install -d ${D}${libdir}
-	install -d ${D}${datadir}/${PN}
 	install -m 0755 ${S}/librf24network.so.1.0 ${D}${libdir}
 	ln -sf librf24network.so.1.0 ${D}${libdir}/librf24network.so
 	ln -sf librf24network.so.1.0 ${D}${libdir}/librf24network.so.1
 	install -m 0644 ${S}/*.h ${D}${includedir}/RF24Network
-	install -m 755 ${S}/examples_RPi/helloworld_rx ${D}${datadir}/${PN}
-	install -m 755 ${S}/examples_RPi/helloworld_tx ${D}${datadir}/${PN}
-	install -m 755 ${S}/examples_RPi/rx-test ${D}${datadir}/${PN}
-	install -m 644 ${S}/examples_RPi/temperature.txt ${D}${datadir}/${PN}
 }
-
-FILES_${PN}-dbg += "${datadir}/${PN}/.debug"
-FILES_${PN} += "${datadir}"
