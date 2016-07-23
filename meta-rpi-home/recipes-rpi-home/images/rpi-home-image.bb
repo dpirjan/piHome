@@ -30,9 +30,8 @@ IMAGE_INSTALL += " \
 	\
 	wiringpi \
 	\
-	rf24 \
-	rf24-network \
-	rf24-mesh \
+	packagegroup-rf24\
+	packagegroup-rf24-examples \
 	\
 	gdb \
 	\
