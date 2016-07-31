@@ -35,6 +35,8 @@ IMAGE_INSTALL += " \
 	\
 	gdb \
 	\
+	piHome \
+	\
 "
 
 SPLASH = "psplash-raspberrypi"
