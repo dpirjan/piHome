@@ -1,8 +1,8 @@
 SUMMARY = "Qt5 smarthome and smartalarm application"
 DESCRIPTION = "This is a smarthome and smartalarm application for raspberrypi based on Qt5"
-LICENSE = "CLOSED"
-
-DEPENDS = "qtbase qtdeclarative"
+LICENSE = "MIT & Proprietary"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=d86c86e0cb119952952dd5d2684eb8c2"
+LIC_FILES_CHKSUM = "file://settingsManager/simplecrypt.h;endline=26;md5=841a77cd57734a3e1a31443ad7917566"
 
 SRCBRANCH = "master"
 SRCREV = "${AUTOREV}"
