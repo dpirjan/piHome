@@ -1,0 +1,95 @@
+From 0c7ce595694d4881bea74dff25bfe6e35afbb71e Mon Sep 17 00:00:00 2001
+From: Aurelian Zanoschi <aurelian17@gmail.com>
+Date: Mon, 15 Aug 2016 12:46:27 +0300
+Subject: [PATCH 1/1] Added parameter to ISR callback
+
+In order to be able to interface wiringPi library with C++
+a parameter needed to be added to wiringpiISR callback function
+for setting the class this pointer. This will make life easier when
+trying to set the callback to a specific class instance.
+
+Signed-off-by: Aurelian Zanoschi <aurelian17@gmail.com>
+---
+ gpio/gpio.c         | 4 ++--
+ wiringPi/wiringPi.c | 8 ++++----
+ wiringPi/wiringPi.h | 2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/gpio/gpio.c b/gpio/gpio.c
+index 4eef19d..a7ade5e 100644
+--- a/gpio/gpio.c
++++ b/gpio/gpio.c
+@@ -491,7 +491,7 @@ void doExport (int argc, char *argv [])
+  *********************************************************************************
+  */
+ 
+-static void wfi (void)
++static void wfi (void* arg)
+   { exit (0) ; }
+ 
+ void doWfi (int argc, char *argv [])
+@@ -515,7 +515,7 @@ void doWfi (int argc, char *argv [])
+     exit (1) ;
+   }
+ 
+-  if (wiringPiISR (pin, mode, &wfi) < 0)
++  if (wiringPiISR (pin, mode, &wfi, NULL) < 0)
+   {
+     fprintf (stderr, "%s: wfi: Unable to setup ISR: %s\n", argv [1], strerror (errno)) ;
+     exit (1) ;
+diff --git a/wiringPi/wiringPi.c b/wiringPi/wiringPi.c
+index 32e5100..1b247de 100644
+--- a/wiringPi/wiringPi.c
++++ b/wiringPi/wiringPi.c
+@@ -271,7 +271,7 @@ static int sysFds [64] =
+ 
+ // ISR Data
+ 
+-static void (*isrFunctions [64])(void) ;
++static void (*isrFunctions [64])(void*) ;
+ 
+ 
+ // Doing it the Arduino way with lookup tables...
+@@ -1622,7 +1622,7 @@ static void *interruptHandler (void *arg)
+ 
+   for (;;)
+     if (waitForInterrupt (myPin, -1) > 0)
+-      isrFunctions [myPin] () ;
++      isrFunctions [myPin] (arg) ;
+ 
+   return NULL ;
+ }
+@@ -1636,7 +1636,7 @@ static void *interruptHandler (void *arg)
+  *********************************************************************************
+  */
+ 
+-int wiringPiISR (int pin, int mode, void (*function)(void))
++int wiringPiISR (int pin, int mode, void (*function)(void*), void* userData)
+ {
+   pthread_t threadId ;
+   const char *modeS ;
+@@ -1718,7 +1718,7 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
+ 
+   pthread_mutex_lock (&pinMutex) ;
+     pinPass = pin ;
+-    pthread_create (&threadId, NULL, interruptHandler, NULL) ;
++    pthread_create (&threadId, NULL, interruptHandler, userData) ;
+     while (pinPass != -1)
+       delay (1) ;
+   pthread_mutex_unlock (&pinMutex) ;
+diff --git a/wiringPi/wiringPi.h b/wiringPi/wiringPi.h
+index dd110fa..7033606 100644
+--- a/wiringPi/wiringPi.h
++++ b/wiringPi/wiringPi.h
+@@ -198,7 +198,7 @@ extern void gpioClockSet        (int pin, int freq) ;
+ //	(Also Pi hardware specific)
+ 
+ extern int  waitForInterrupt    (int pin, int mS) ;
+-extern int  wiringPiISR         (int pin, int mode, void (*function)(void)) ;
++extern int  wiringPiISR         (int pin, int mode, void (*function)(void*), void* userData) ;
+ 
+ // Threads
+ 
+-- 
+2.7.4
+
