@@ -35,7 +35,7 @@ IMAGE_INSTALL += " \
 	\
 	gdb \
 	\
-	piHome \
+	pismarthome \
 	\
 "
 
