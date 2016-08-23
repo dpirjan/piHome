@@ -20,6 +20,8 @@ IMAGE_INSTALL += " \
 	libdrm \
 	libinput \
 	\
+	sqlite3 \
+	\
 	dbus \
 	\
 	openssh-sftp-server \
@@ -42,6 +44,3 @@ IMAGE_INSTALL += " \
 SPLASH = "psplash-raspberrypi"
 
 IMAGE_FEATURES += "ssh-server-dropbear splash"
-
-# Add extra 1Gb space to the rootfs image
-IMAGE_ROOTFS_EXTRA_SPACE_append += "+ 1048576"
