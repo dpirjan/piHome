@@ -12,6 +12,8 @@ RDEPENDS_${PN} += " \
 	userland \
 "
 
+PACKAGECONFIG_append = " sql-sqlite"
+
 QT_CONFIG_FLAGS_append_raspberrypi2 = " \
 	-device-option CROSS_COMPILE={TARGET_PREFIX} \
 	-I${STAGING_DIR_TARGET}/${includedir}/interface/vcos/pthreads \
