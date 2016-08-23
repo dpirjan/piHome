@@ -26,7 +26,7 @@ DEPENDS = "\
 do_install() {
 	install -d ${D}/${ROOT_HOME}/.piHome
 	install -d ${D}${datadir}/${PN}
-	install -d ${D}${libdir}/${PN}
+	install -d ${D}${libdir}/
 	install -m 0755 ${B}/dataManager/databaseManagerService/databaseManager ${D}${datadir}/${PN}
 	install -m 0755 ${B}/dataManager/databaseManagerInfo/*.so* ${D}${libdir}/${PN}
 	install -m 0755 ${B}/sensorManager/sensorManager ${D}${datadir}/${PN}
