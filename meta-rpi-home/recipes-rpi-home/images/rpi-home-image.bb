@@ -24,6 +24,9 @@ IMAGE_INSTALL += " \
 	\
 	dbus \
 	\
+	openssl \
+	ca-certificates \
+	\
 	openssh-sftp-server \
 	\
 	packagegroup-qt5 \

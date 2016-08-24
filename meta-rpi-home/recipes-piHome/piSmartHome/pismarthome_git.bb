@@ -25,6 +25,7 @@ DEPENDS = "\
 
 do_install_append() {
 	install -d ${D}/${ROOT_HOME}/.piHome
+	install -d ${D}/${ROOT_HOME}/.piHome/logging
 }
 
 FILES_${PN}-dbg += "\
