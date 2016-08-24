@@ -23,23 +23,15 @@ DEPENDS = "\
 	rf24 \
 "
 
-do_install() {
+do_install_append() {
 	install -d ${D}/${ROOT_HOME}/.piHome
-	install -d ${D}${datadir}/${PN}
-	install -d ${D}${libdir}/
-	install -m 0755 ${B}/dataManager/databaseManagerService/databaseManager ${D}${datadir}/${PN}
-	install -m 0755 ${B}/dataManager/databaseManagerInfo/*.so* ${D}${libdir}/${PN}
-	install -m 0755 ${B}/sensorManager/sensorManager ${D}${datadir}/${PN}
-	install -m 0755 ${B}/dataManager/mailManagerService/mailManager ${D}${datadir}/${PN}
 }
 
 FILES_${PN}-dbg += "\
 	${datadir}/${PN}/.debug \
-	${libdir}/${PN}/.debug \
+	${libdir}/.debug \
 "
 
 FILES_${PN} += "\
-	${datadir} \
-	${libdir} \
 	${ROOT_HOME}/.piHome \
 "
