@@ -14,18 +14,28 @@ SRC_URI = "git://git@github.com/aurelian17/piQtSmartHome.git;protocol=ssh;branch
 
 S = "${WORKDIR}/git"
 
-inherit qmake5
+inherit qmake5 systemd
 
 DEPENDS = "\
+	systemd \
+	dbus \
 	qtbase \
 	wiringpi \
 	rf24-network \
 	rf24 \
 "
 
+SYSTEMD_SERVICE_${PN} = "\
+	piHomeDatabase.service \
+	piHomeMail.service \
+	piHomeSensor.service \
+"
+
 do_install_append() {
 	install -d ${D}/${ROOT_HOME}/.piHome
 	install -d ${D}/${ROOT_HOME}/.piHome/logging
+	install -d ${D}/${systemd_unitdir}/system
+	install -d ${D}/${sysconfdir}/dbus-1/system.d
 }
 
 FILES_${PN}-dbg += "\
@@ -35,4 +45,6 @@ FILES_${PN}-dbg += "\
 
 FILES_${PN} += "\
 	${ROOT_HOME}/.piHome \
+	${systemd_unitdir}/system \
+	${sysconfdir}/dbus-1 \
 "
