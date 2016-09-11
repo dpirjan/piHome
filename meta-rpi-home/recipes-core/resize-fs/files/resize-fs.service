@@ -1,0 +1,14 @@
+[Unit]
+Description=resize-fs
+DefaultDependencies=no
+After=systemd-remount-fs.service
+
+[Service]
+Type=oneshot
+ExecStart=/lib/systemd/scripts/resize-fs.sh
+ExecStart=/bin/systemctl disable resize-fs.service
+
+StandardOutput=journal+console
+
+[Install]
+WantedBy=local-fs.target

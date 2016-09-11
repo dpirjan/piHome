@@ -1,6 +1,4 @@
 # Base this image on core-image-minimal
-# PACKAGES TO BE ADDED:
-#raspi-config
 
 include recipes-core/images/core-image-minimal.bb
 
@@ -41,6 +39,10 @@ IMAGE_INSTALL += " \
 	gdb \
 	\
 	pismarthome \
+	\
+	e2fsprogs \
+	e2fsprogs-resize2fs \
+	resize-fs \
 	\
 "
 

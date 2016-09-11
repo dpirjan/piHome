@@ -4,7 +4,9 @@
 PREFERRED_PROVIDER_jpeg = "libjpeg-turbo"
 PREFERRED_PROVIDER_jpeg-native = "libjpeg-turbo-native"
 
-IMAGE_FSTYPES = "ext3 rpi-sdimg"
+IMAGE_FSTYPES = "ext4 rpi-sdimg"
+SDIMG_ROOTFS_TYPE = "ext4.xz"
+SDIMG_COMPRESSION = "xz"
 
 # the default is 4.1.x
 PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
