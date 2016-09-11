@@ -14,7 +14,9 @@ RDEPENDS_${PN} += " \
 
 PACKAGECONFIG_append = " sql-sqlite"
 
-QT_CONFIG_FLAGS_append_raspberrypi2 = " \
+COMPATIBLE_MACHINE = "(raspberrypi3|raspberrypi2|raspberrypi)"
+
+QT_CONFIG_FLAGS_append = " \
 	-device-option CROSS_COMPILE={TARGET_PREFIX} \
 	-I${STAGING_DIR_TARGET}/${includedir}/interface/vcos/pthreads \
 	-I${STAGING_DIR_TARGET}/${includedir}/interface/vmcs_host/linux \
