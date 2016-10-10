@@ -18,4 +18,5 @@ RDEPENDS_${PN} = " \
 	qt5ledscreen \
 	qt5nmapcarousedemo \
 	qt5nmapper \
+	qmlbench \
 "
