@@ -44,6 +44,8 @@ IMAGE_INSTALL += " \
 	e2fsprogs-resize2fs \
 	resize-fs \
 	\
+	packagegroup-benchmarks \
+	\
 "
 
 SPLASH = "psplash-raspberrypi"
