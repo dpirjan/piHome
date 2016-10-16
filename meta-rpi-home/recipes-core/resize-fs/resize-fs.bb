@@ -4,7 +4,8 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d
 
 SRC_URI = " \
 	file://resize-fs.service \
-	file://resize-fs.sh \
+	file://resize-fs-phase1.sh \
+	file://resize-fs-phase2.sh \
 "
 
 inherit systemd
@@ -17,12 +18,14 @@ do_install() {
     install -d ${D}${systemd_unitdir}/system
     install -d ${D}${systemd_unitdir}/scripts
     install -c -m 0644 ${WORKDIR}/resize-fs.service ${D}${systemd_unitdir}/system
-    install -m 0755 ${WORKDIR}/resize-fs.sh ${D}${systemd_unitdir}/scripts
+    install -m 0755 ${WORKDIR}/resize-fs-phase1.sh ${D}${systemd_unitdir}/scripts
+    install -m 0755 ${WORKDIR}/resize-fs-phase2.sh ${D}${systemd_unitdir}/scripts
 }
 
 FILES_${PN} = " \
 	${base_libdir}/systemd/system/resize-fs.service \
-	${base_libdir}/systemd/scripts/resize-fs.sh \
+	${base_libdir}/systemd/scripts/resize-fs-phase1.sh \
+	${base_libdir}/systemd/scripts/resize-fs-phase2.sh \
 "
 
 # As this package is tied to systemd, only build it when we're also building systemd.
