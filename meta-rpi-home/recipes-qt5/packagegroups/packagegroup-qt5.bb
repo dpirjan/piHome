@@ -10,7 +10,6 @@ RDEPENDS_${PN} = " \
 	qtsvg \
 	qtsvg-plugins \
 	qtbase \
-	qtbase-fonts \
 	qtbase-tools \
 	qtbase-plugins \
 	qtdeclarative \
