@@ -8,8 +8,8 @@ IMAGE_FSTYPES = "ext4 rpi-sdimg"
 SDIMG_ROOTFS_TYPE = "ext4.xz"
 SDIMG_COMPRESSION = "xz"
 
-# the default is 4.1.x
-PREFERRED_VERSION_linux-raspberrypi = "4.1.%"
+# the default is 4.4.x
+PREFERRED_VERSION_linux-raspberrypi = "4.4.%"
 
 MACHINE = "raspberrypi2"
 
