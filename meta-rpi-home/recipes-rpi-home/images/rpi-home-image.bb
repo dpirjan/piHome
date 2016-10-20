@@ -39,10 +39,17 @@ IMAGE_INSTALL += " \
 	gdb \
 	\
 	pismarthome \
+	piunitmaster \
 	\
 	e2fsprogs \
 	e2fsprogs-resize2fs \
 	resize-fs \
+	tzdata \
+	tzdata-africa \
+	tzdata-americas \
+	tzdata-asia \
+	tzdata-australia \
+	tzdata-europe \
 	\
 	packagegroup-benchmarks \
 	\
