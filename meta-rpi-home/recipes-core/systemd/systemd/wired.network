@@ -6,4 +6,3 @@ DHCP=ipv4
 DNS=127.0.0.1
 DNS=8.8.4.4
 DNS=8.8.8.8
-NTP=pool.ntp.org
