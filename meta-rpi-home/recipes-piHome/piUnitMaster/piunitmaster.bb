@@ -20,8 +20,8 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}${bindir}
-    install -c -m 0755 ${B}/UnitMasterRPI ${D}${bindir}
+	install -d ${D}${datadir}/${PN}
+	install -c -m 0755 ${B}/UnitMasterRPI ${D}${datadir}/${PN}
 }
 
-FILES_${PN} += "${bindir}/UnitMasterRPI"
+FILES_${PN} += "${datadir}/${PN}/UnitMasterRPI"
