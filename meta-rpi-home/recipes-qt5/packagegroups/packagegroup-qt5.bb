@@ -7,8 +7,6 @@ PR = "r0"
 inherit packagegroup
 
 RDEPENDS_${PN} = " \
-	qtsvg \
-	qtsvg-plugins \
 	qtbase \
 	qtbase-tools \
 	qtbase-plugins \
@@ -17,15 +15,10 @@ RDEPENDS_${PN} = " \
 	qtdeclarative-qmlplugins \
 	qtdeclarative-tools \
 	qtgraphicaleffects-qmlplugins \
-	qtscript \
-	qtsensors \
-	qtsensors-plugins \
-	qtsensors-qmlplugins \
-	qtwebchannel \
-	qtwebchannel-qmlplugins \
 	qtwebsockets \
 	qtwebsockets-qmlplugins \
-	qt3d \
-	qtimageformats \
-	qtimageformats-plugins \
+	qtquickcontrols \
+	qtquickcontrols2 \
+	qtquick1 \
+	qtvirtualkeyboard \
 "
