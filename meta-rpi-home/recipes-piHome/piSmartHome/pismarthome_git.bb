@@ -20,6 +20,9 @@ DEPENDS = "\
 	systemd \
 	dbus \
 	qtbase \
+	qtquick1 \
+	qtquickcontrols \
+	qtquickcontrols2 \
 	wiringpi \
 	rf24-network \
 	rf24 \
