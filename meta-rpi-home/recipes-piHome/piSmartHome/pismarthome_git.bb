@@ -33,6 +33,7 @@ SYSTEMD_SERVICE_${PN} = "\
 	piHomeDatabase.service \
 	piHomeMail.service \
 	piHomeSensor.service \
+	piHomeUI.service \
 "
 
 do_install_append() {
