@@ -16,15 +16,16 @@ RDEPENDS_${PN} += "qtbase qtdeclarative"
 SRC_URI = " \
 	git://github.com/sletta/qmlbench.git;protocol=https;branch=master \
 	file://startQmlBench.sh \
+	file://0001-Disabling-swap-interval-for-QSurfaceFormat.patch \
 "
-SRCREV = "5dcc804ead9717dedc4a18d82ea4b25dfa557170"
+SRCREV = "405997d2646579ddacd5322b77d1e6197f6a3c9c"
 
 inherit qmake5
 
 do_install(){
    install -d ${D}${datadir}/${PN}
    cp -r ${S}/benchmark ${D}${datadir}/${PN}
-   install -m 0655 ${B}/qmlbench ${D}${datadir}/${PN}
+   install -m 0755 ${B}/qmlbench ${D}${datadir}/${PN}
    install -m 0755 ${WORKDIR}/startQmlBench.sh ${D}${datadir}/${PN}
 }
 

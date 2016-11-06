@@ -1,0 +1,61 @@
+From 40a41fc77514e211a6001eb2c940cee2094604da Mon Sep 17 00:00:00 2001
+From: Aurelian Zanoschi <aurelian17@gmail.com>
+Date: Wed, 2 Nov 2016 22:39:25 +0200
+Subject: [PATCH 1/1] Disabling swap interval for QSurfaceFormat
+
+In order to obtain the maximum performance the swap interval has
+to be disabled for the QSurfaceFormat instance used by the application.
+Resolution was set to the screen default resolution, 1024x600 and some
+other small adjustments were done to the application.
+---
+ main.cpp | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/main.cpp b/main.cpp
+index ba7e3f3..ca324b2 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -137,7 +137,7 @@ public:
+         setSurfaceType(OpenGLSurface);
+         QSurfaceFormat format;
+ #if QT_VERSION >= 0x050300
+-        format.setSwapInterval(1);
++        format.setSwapInterval(0);
+ #endif
+         setFormat(format);
+     }
+@@ -232,7 +232,7 @@ struct Options
+         , fpsTolerance(0.05)
+         , fpsInterval(1000)
+         , fpsOverride(0)
+-        , windowSize(800, 600)
++        , windowSize(1024, 600)
+     {
+     }
+ 
+@@ -365,7 +365,7 @@ int main(int argc, char **argv)
+     QCommandLineOption widthOption(QStringLiteral("width"),
+                                    QStringLiteral("Window Width"),
+                                    QStringLiteral("width"),
+-                                   QStringLiteral("800"));
++                                   QStringLiteral("1024"));
+     parser.addOption(widthOption);
+ 
+     QCommandLineOption heightOption(QStringLiteral("height"),
+@@ -524,13 +524,6 @@ bool BenchmarkRunner::execute()
+     QTimer::singleShot(options.delayedStart, this, SLOT(start()));
+ 
+     m_view = new QQuickView();
+-    // Make sure proper fullscreen is possible on OSX
+-    m_view->setFlags(Qt::Window
+-                     | Qt::WindowSystemMenuHint
+-                     | Qt::WindowTitleHint
+-                     | Qt::WindowMinMaxButtonsHint
+-                     | Qt::WindowCloseButtonHint
+-                     | Qt::WindowFullscreenButtonHint);
+     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+     m_view->rootContext()->setContextProperty("benchmark", this);
+ 
+-- 
+2.7.4
+
