@@ -5,13 +5,13 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://RF24.h;endline=8;md5=f70af29e19cece3ed8668649bdf839c4"
 
 SRCBRANCH = "master"
-SRCREV = "57a74e8c7b928bbccf4f7691e4e2593012dda40e"
+SRCREV = "8ea5127078394591a0af5b409c38fa11cb0677d9"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://git@github.com/TMRh20/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
 
-LIBNAME = "librf24.so.1.1.6"
+LIBNAME = "librf24.so.1.2.0"
 LIBDEPRECATE = "librf24-bcm.so"
 ARCH_DIR = "utility"
 DRIVER_DIR = "utility/RPi"
@@ -42,7 +42,7 @@ do_install() {
 	install -d ${D}${libdir}
 	install -d ${D}${includedir}/RF24/${DRIVER_DIR}
 	install -m 0755 ${LIBNAME} ${D}${libdir}
-	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1.1
+	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1.2
 	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so.1
 	ln -sf ${LIBNAME} ${D}${libdir}/librf24.so
 	ln -sf ${LIBNAME} ${D}${libdir}/${LIBDEPRECATE}

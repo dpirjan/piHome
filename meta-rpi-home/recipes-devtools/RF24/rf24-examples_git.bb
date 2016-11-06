@@ -5,7 +5,7 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://RF24.h;endline=8;md5=f70af29e19cece3ed8668649bdf839c4"
 
 SRCBRANCH = "master"
-SRCREV = "57a74e8c7b928bbccf4f7691e4e2593012dda40e"
+SRCREV = "8ea5127078394591a0af5b409c38fa11cb0677d9"
 
 S = "${WORKDIR}/git"
 
