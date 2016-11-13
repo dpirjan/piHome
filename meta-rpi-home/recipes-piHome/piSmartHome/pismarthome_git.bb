@@ -3,8 +3,8 @@ DESCRIPTION = "This is a smartHome and smartAlarmSystem application for raspberr
 
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "\
-		file://COPYRIGHT;md5=000b5abf9a83d7e3bfca04095495c744 \
-		file://dataManager/mailManagerService/simplecrypt.h;endline=26;md5=841a77cd57734a3e1a31443ad7917566 \
+		file://COPYRIGHT;md5=0d51da33369ec53f7675a872260b3e90 \
+		file://userManager/simplecrypt.h;endline=26;md5=841a77cd57734a3e1a31443ad7917566 \
 "
 
 SRCBRANCH = "master"

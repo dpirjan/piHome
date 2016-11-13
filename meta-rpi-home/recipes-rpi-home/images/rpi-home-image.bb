@@ -32,6 +32,7 @@ IMAGE_INSTALL += " \
 	packagegroup-qt5-demos \
 	\
 	wiringpi \
+	bcm2835-tests \
 	\
 	packagegroup-rf24\
 	packagegroup-rf24-examples \
@@ -40,6 +41,7 @@ IMAGE_INSTALL += " \
 	\
 	pismarthome \
 	piunitmaster \
+	pirf24 \
 	\
 	e2fsprogs \
 	e2fsprogs-resize2fs \

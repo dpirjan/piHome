@@ -5,7 +5,10 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
-SRC_URI += "file://UnitMasterRPI.c"
+SRC_URI += " \
+	file://UnitMasterRPI.c \
+	file://UnitMasterRPICPP.cpp \
+"
 
 S = "${WORKDIR}"
 
@@ -16,12 +19,17 @@ DEPENDS += " \
 "
 
 do_compile() {
-    $CXX $CXXFLAGS ${S}/UnitMasterRPI.c -lrf24mesh -lrf24network -lrf24 -o UnitMasterRPI
+	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPI.c -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPI
+	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPICPP.cpp -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPICPP
 }
 
 do_install() {
 	install -d ${D}${datadir}/${PN}
 	install -c -m 0755 ${B}/UnitMasterRPI ${D}${datadir}/${PN}
+	install -c -m 0755 ${B}/UnitMasterRPICPP ${D}${datadir}/${PN}
 }
 
-FILES_${PN} += "${datadir}/${PN}/UnitMasterRPI"
+FILES_${PN} += " \
+	${datadir}/${PN}/UnitMasterRPI \
+	${datadir}/${PN}/UnitMasterRPICPP \
+"
