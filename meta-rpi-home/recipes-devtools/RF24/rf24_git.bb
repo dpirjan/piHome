@@ -5,16 +5,22 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://RF24.h;endline=8;md5=f70af29e19cece3ed8668649bdf839c4"
 
 SRCBRANCH = "master"
-SRCREV = "e234ba7142d6fcd30b37cf45991099336473567a"
+#SRCREV = "e234ba7142d6fcd30b37cf45991099336473567a"
+SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://git@github.com/TMRh20/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
+#SRC_URI = "git://git@github.com/TMRh20/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
+SRC_URI = "git://git@github.com/aurelian17/RF24.git;protocol=ssh;branch=${SRCBRANCH}"
 
 LIBNAME = "librf24.so.1.2.0"
 LIBDEPRECATE = "librf24-bcm.so"
 ARCH_DIR = "utility"
-DRIVER_DIR = "utility/RPi"
+DRIVER_DIR = "utility/wiringPi"
+
+DEPENDS += " \
+	wiringpi \
+"
 
 inherit autotools-brokensep
 
@@ -30,9 +36,9 @@ EXTRA_OECONF = " \
 	--no-clean \
 "
 
-EXTRA_OECONF_append_raspberrypi += "--driver=RPi --soc=BCM2835"
-EXTRA_OECONF_append_raspberrypi2 += "--driver=RPi --soc=BCM2835"
-EXTRA_OECONF_append_raspberrypi3 += "--driver=RPi --soc=BCM2836"
+EXTRA_OECONF_append_raspberrypi += "--driver=wiringPi"
+EXTRA_OECONF_append_raspberrypi2 += "--driver=wiringPi"
+EXTRA_OECONF_append_raspberrypi3 += "--driver=wiringPi"
 
 do_configure_append() {
 	cp ${S}/${DRIVER_DIR}/includes.h ${S}/utility
