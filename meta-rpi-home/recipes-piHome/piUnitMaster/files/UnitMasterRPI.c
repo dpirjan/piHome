@@ -48,12 +48,12 @@ volatile int isrRFcntr	= 0;
 
 
 // Set up NRF24L01+ radio on SPI bus (see the above wiring)
-RF24 radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);
+RF24 radio(22, 0);
 RF24Network network(radio);
 RF24Mesh mesh(radio,network);
 
 
-void f_rfISR(void)
+void f_rfISR(void *arg)
 {
         printf("Interrupt triggered %d\n\n", isrRFcntr);
         isrRFcntr += 1;
@@ -142,9 +142,16 @@ int check_for_incoming_data(void) {
 
 int main(void) {
         // Configure RF ISR
+       if(wiringPiSetup() < 0)
+            printf("Unable to setup wiringPi: %s\n", strerror(errno));
+
         printf("\nSet RF ISR on pin %i !!!\n", pinRF);
 
-        attachInterrupt(pinRF, INT_EDGE_FALLING, f_rfISR);
+        //attachInterrupt(pinRF, INT_EDGE_FALLING, f_rfISR, NULL);
+        if(wiringPiISR(pinRF, INT_EDGE_FALLING, f_rfISR, NULL) < 0)
+            printf("Cannot setup interrupt on %d!", pinRF);
+        else
+            printf("WIRINGPI DRIVER OK!!!!");
 
         // Set the nodeID to 0 for the master node
         mesh.setNodeID(0);

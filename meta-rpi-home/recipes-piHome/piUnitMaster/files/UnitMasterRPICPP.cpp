@@ -46,7 +46,15 @@ class RF24Functions
 public:
         RF24Functions()
         {
-                attachInterrupt(pinRF, INT_EDGE_FALLING, interruptHandler);
+                if(wiringPiSetup() < 0)
+                    printf("Unable to setup wiringPi: %s\n", strerror(errno));
+
+                //attachInterrupt(pinRF, INT_EDGE_FALLING, interruptHandler);
+                if(wiringPiISR(pinRF, INT_EDGE_FALLING, RF24Functions::interruptHandler, NULL) < 0)
+                    printf("Unable to setup interrupt handler on pin %d!", pinRF);
+                else
+                    printf("WIRINGPI DRIVER OK!!!");
+
 
                 // Set the nodeID to 0 for the master node
                 RF24Functions::mesh.setNodeID(0);
@@ -135,7 +143,7 @@ public:
         }
 
 private:
-        static void interruptHandler()
+        static void interruptHandler(void *arg)
         {
                 printf("Interrupt triggered %d\n\n", ++RF24Functions::m_isrRFcntr);
         }
@@ -154,7 +162,7 @@ private:
 };
 
 int RF24Functions::m_isrRFcntr = 0;
-RF24 RF24Functions::radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);
+RF24 RF24Functions::radio(22, 0);
 RF24Network RF24Functions::network(RF24Functions::radio);
 RF24Mesh RF24Functions::mesh(RF24Functions::radio, RF24Functions::network);
 

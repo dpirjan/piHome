@@ -19,8 +19,8 @@ DEPENDS += " \
 "
 
 do_compile() {
-	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPI.c -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPI
-	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPICPP.cpp -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPICPP
+	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPI.c -lwiringPi -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPI
+	$CXX $CXXFLAGS -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC ${S}/UnitMasterRPICPP.cpp -lwiringPi -lrf24mesh -lrf24network -lrf24 -lpthread -o UnitMasterRPICPP
 }
 
 do_install() {
