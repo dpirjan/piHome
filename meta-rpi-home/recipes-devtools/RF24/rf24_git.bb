@@ -35,7 +35,7 @@ EXTRA_OECONF_append_raspberrypi2 += "--driver=RPi --soc=BCM2835"
 EXTRA_OECONF_append_raspberrypi3 += "--driver=RPi --soc=BCM2836"
 
 do_configure_append() {
-	cp ${S}/utility/RPi/includes.h ${S}/utility
+	cp ${S}/${DRIVER_DIR}/includes.h ${S}/utility
 }
 
 do_install() {
