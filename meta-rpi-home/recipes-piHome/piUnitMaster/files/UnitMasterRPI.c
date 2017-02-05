@@ -48,12 +48,14 @@ volatile int isrRFcntr	= 0;
 
 
 // Set up NRF24L01+ radio on SPI bus (see the above wiring)
-RF24 radio(22, 0);
+//RF24 radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ); //RPi
+RF24 radio(22, 8); // wiringPi
 RF24Network network(radio);
 RF24Mesh mesh(radio,network);
 
 
-void f_rfISR(void *arg)
+void f_rfISR(void *arg) // wiringPi
+//void f_rfISR(void) // RPi
 {
         printf("Interrupt triggered %d\n\n", isrRFcntr);
         isrRFcntr += 1;
@@ -142,16 +144,19 @@ int check_for_incoming_data(void) {
 
 int main(void) {
         // Configure RF ISR
-       if(wiringPiSetup() < 0)
+       if(wiringPiSetupGpio() < 0)
             printf("Unable to setup wiringPi: %s\n", strerror(errno));
+       else
+            printf("wiringPiSetup() complete\n");
 
-        printf("\nSet RF ISR on pin %i !!!\n", pinRF);
+        printf("\nSet RF ISR on pin %i\n", pinRF);
 
-        //attachInterrupt(pinRF, INT_EDGE_FALLING, f_rfISR, NULL);
-        if(wiringPiISR(pinRF, INT_EDGE_FALLING, f_rfISR, NULL) < 0)
-            printf("Cannot setup interrupt on %d!", pinRF);
+//        attachInterrupt(pinRF, INT_EDGE_FALLING, f_rfISR); // RPi
+        if(wiringPiISR(pinRF, INT_EDGE_FALLING, f_rfISR, NULL) < 0) // wiringPi
+            printf("Cannot setup interrupt on %d!\n", pinRF);
         else
-            printf("WIRINGPI DRIVER OK!!!!");
+            printf("Interrupt setup ok!\n");
+
 
         // Set the nodeID to 0 for the master node
         mesh.setNodeID(0);
@@ -174,7 +179,7 @@ int main(void) {
                 // MASTER never sleeps as it is in receive and has to assign addresses
                 if(network.available()) {
 #ifdef USE_DEBUG
-                        printf("\nPaket received.\n");
+                        printf("\nPacket received.\n");
 #endif
                         stat = check_for_incoming_data();
                 }
