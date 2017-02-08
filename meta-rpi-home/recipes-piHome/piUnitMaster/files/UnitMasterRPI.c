@@ -25,6 +25,8 @@ RaspberryPI versions 1, 2, 3 are pins compatible for pins no 01 .. 26
 #include <RF24Network/RF24Network.h>
 #include "RF24Mesh/RF24Mesh.h"
 
+#include <wiringPi.h>
+
 #include <unistd.h>
 
 using namespace std;
