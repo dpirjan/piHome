@@ -35,7 +35,6 @@ IMAGE_INSTALL += " \
 	bcm2835-tests \
 	\
 	packagegroup-rf24\
-	packagegroup-rf24-examples \
 	\
 	gdb \
 	\
