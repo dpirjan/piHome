@@ -33,14 +33,12 @@ SYSTEMD_SERVICE_${PN} = "\
 	piHomeDatabase.service \
 	piHomeMail.service \
 	piHomeSensor.service \
+	piHomeWeb.service \
 	piHomeUI.service \
 "
 
 do_install_append() {
-	install -d ${D}/${ROOT_HOME}/.piHome
-	install -d ${D}/${ROOT_HOME}/.piHome/logging
-	install -d ${D}/${ROOT_HOME}/.config
-	install -d ${D}/${ROOT_HOME}/.config/piHome
+	install -d ${D}/${ROOT_HOME}/.config/piHome/logging
 	install -d ${D}/${systemd_unitdir}/system
 	install -d ${D}/${sysconfdir}/dbus-1/system.d
 }
