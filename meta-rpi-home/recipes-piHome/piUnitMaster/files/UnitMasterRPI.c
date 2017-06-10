@@ -44,7 +44,7 @@ using namespace std;
 #define ID_Vibration        0x00008000UL    // (bit_15) Knock sensor
 #define ID_Flood            0x00010000UL    // (bit_16) Water presence
 #define ID_WaterLevel       0x00020000UL    // (bit_17) Water level
-#define ID_DoorLocked       0x00040000UL    // (bit_18) Door locked
+#define ID_DoorLockedState  0x00040000UL    // (bit_18) Door locked
 #define ID_BatteryLevel     0x00080000UL    // (bit_19) Read battery voltage on Analog
 
 //Actuators IDs <actuatorIDs>
@@ -54,14 +54,14 @@ using namespace std;
 #define ID_DoorBell         0x00800000UL    // (bit_23)
 #define ID_IR               0x01000000UL    // (bit_24)
 #define ID_Pump             0x02000000UL    // (bit_25) Water pump
+#define ID_LockDoor         0x04000000UL    // (bit_26) bolt or whatever else used for locking the door
+
+#define ID_Watchdog         0x08000000UL    // (bit_27) To read/configure watchdog
 
 #define ID_GET_TASK         0x80000000UL    
 
 // Default value to wake-up [ms] (watchdog timestamp)
 #define WDT_DT              4000
-
-// Master node for RF mesh
-#define masterID             0
 
 // Size of the RX ring buffer (LAST_RX+1)
 #define LAST_RX              7
@@ -69,41 +69,48 @@ using namespace std;
 // Define messages types
 /* Arduino Units are only "slaves" (nodeID > 0)
  * Types of available messages:
- *  - GET_ALL : From Master to Unit and it is a request to forward all
+ *  - GET_ALL : From Master to Unit, it requests to forward all
  *              sensors values and actuators status.
  *              mesh.write msg_type="A" 0x41
- *  - GET_DEV : From Master to Unit and is a request to get the value for 
+ *  - GET_DEV : From Master to Unit, it requests to get the value for 
  *              a given sensor or the status for actuator
  *              mesh.write msg_type="D" 0x44
- *  - SET_ACT : From Master to Unit to drive an actuator
+ *  - SET_ACT : From Master to Unit, it requests to drive an actuator
  *              mesh.write msg_type="C" 0x43
- *  - SET_DLT : From Master to Unit set the time step for reading the
- *              specified sensor
+ *  - GET_DLT : From Master to Unit, read the time step for a sensor/actuator
+ *              mesh.write msg_type="R" 0x52              
+ *  - SND_DLT : From Unit to Master, send the time step for a sensor/actuator
+ *              mesh.write msg_type="t" 0x74
+ *  - SET_DLT : From Master to Unit, set the time step for a sensor/actuator
  *              mesh.write msg_type="T" 0x54
- *  - GET_MSK : From Master to Unit read if sensor is masked or not
+ *  - GET_MSK : From Master to Unit, it requests the sensor mask
  *              (if sensor value will be delivered)
+ *              mesh.write msg_type="G" 0x47
  *  - SND_MSK : From Unit to Master, return mask value for sensor
- *  - CNF_MSK : From Master to Unit configure mask value:
+ *              mesh.write msg_type="m" 0x6D
+ *  - CNF_MSK : From Master to Unit, configure mask value:
  *              val = 0 Sensor value isn't delivered (even when interrupt occours)
  *                      Remark:
  *                        When forced, the sensor value is sent to Master, means if
  *                        explicitly is requested then this task is prioritar
  *              val = 1 Sensor value is deliver without restriction
- * 
+ *              mesh.write msg_type="M" 0x4D
  *  -SEND_VAL : From Unit to Master, respond with the sensor/actuator value
  *              mesh.write msg_type="V" 0x56
  *  -SEND_ERR : From Unit to Master, return SUCCESS or ERROR No
- *              mesh.write msg_type="R" 0x52
+ *              mesh.write msg_type="E" 0x45
  */
 #define SEND_VAL             0x56   // "V"
-#define SEND_ERR             0x52   // "R"
+#define SEND_ERR             0x45   // "E"
 #define GET_ALL              0x41   // "A"
 #define GET_DEV              0x44   // "D"
 #define SET_ACT              0x43   // "C"
+#define GET_DLT              0x52   // "R"
+#define SND_DLT              0x74   // "t"
 #define SET_DLT              0x54   // "T"
 #define GET_MSK              0x47   // "G"
-#define SND_MSK              0x53   // "S"
-#define CNF_MSK              0x4D   // "M"
+#define SND_MSK              0x6D   // "m"
+#define SET_MSK              0x4D   // "M"
 
 // Maximum number of retries when send a sensor value
 #define MAX_RETRIES          5
@@ -131,8 +138,6 @@ using namespace std;
 
 #define WRONG_HEADER_TYPE   -50
 
-#define NULL_HEADER_TYPE    -51
-
 #define WRONG_CONFIG        -60
 
 #define UNKNOWN_MSG_TYPE    -70
@@ -140,21 +145,11 @@ using namespace std;
 #define RX_RING_FULL        -80
 #define RX_NO_DATA_AVAIL    -81
 
+#define NO_ALARM_AVAIL      -90
+
 // Aditional information when an error occours
 #define RETRIES_FAILED    0xFF100000UL
 #define ASSIGNED_TASK     0xFF200000UL
-
-// Global configuration parameters
-#define SET_WATCHDOG        0x01UL
-#define SET_READ_TH         0x02UL
-#define SET_PUMP_TIME       0x04UL
-
-#define MASK_SIREN          0x1
-#define MASK_BUZZER         0x2
-#define MASK_RELAY          0x4
-#define MASK_DOORBELL       0x5
-#define MASK_IR             0x6
-#define MASK_PUMP           0x7
 
 
 // RPI private defines
@@ -167,11 +162,10 @@ using namespace std;
 
 // RF payload transmition:
 struct t_payload {
-  unsigned int IDs;           // sensor or actuator ID        (32 bits)
-  //unsigned char         value[4];  __DAPI__ de vazut cum ne coafeaza
-  float         value;        // a) the value read from the sensor  (32 bits)
+  unsigned int IDs;           // sensor or actuator ID				(32 bits)
+  float         value;        // a) the value read from the sensor	(32 bits)
                               // b) preset value for actuator
-  unsigned short int  IDnode; // node ID - redundant information  (16 bits)
+  unsigned short int  IDnode; // node ID - redundant information	(16 bits)
 } __attribute__((packed)) 
   pp, *g_pp;                  // RF global buffer
 
@@ -193,11 +187,11 @@ int head  = 0;                // current RX index to be filled
 int posRX = 0;                // message to be handled
 
 // Output status (error handling)
-int g_stat = 0;
+int g_stat = RET_SUCCESS;
 
 // RF ISR configuration status
 int rfIRQ = 1;
-volatile int isrRFcntr  = 0;  // __DAPI__ numai pt debugging ToBeRemoved
+volatile int isrRFcntr  = 0;  // only for debugging purposes [ToBeRemoved]
 int g_isrRF_ON = 0;           // RF packets available
 
 // Describe all sensors and actuators available for current Unit
@@ -206,7 +200,7 @@ unsigned long g_UnitCapabilities = 0;
 // Global mask for sensors and actuators available for current Unit
 unsigned long g_UnitMask = 0;
 
-unsigned int  g_cntr = 0;     // __DAPI__ numai pt debugging ToBeRemoved
+unsigned int  g_cntr = 0;     // only for debugging purposes [ToBeRemoved]
 
 
 // Set up NRF24L01+ radio on SPI bus (see the above wiring)
@@ -220,7 +214,7 @@ RF24Network network(radio);
 void f_rfISR(void *arg)       // wiringPi
 //void f_rfISR(void) // RPi
 {
-  // g_stat = RET_SUCCESS;  __DAPI__ este necesar ?
+  g_stat = RET_SUCCESS;
   do {
     // Avoid overwrite current data when the ring queue is full!!
     if (rx[head].newD == 0){
@@ -230,16 +224,12 @@ void f_rfISR(void *arg)       // wiringPi
         rx[head].newD = 1;
         head += 1;  // Go to next buffer
         head &= LAST_RX;
+      } else {
+        g_stat = WRONG_HEADER_TYPE;  
       }
-      /*
-      __DAPI__ de controlat acest tip de eroare
-      else {
-        g_stat = NULL_HEADER_TYPE;  
-      }
-      */
     } else {
       // Ring full discard data !!!
-      //g_stat = RX_RING_FULL; __DAPI__ este necesar ?
+      g_stat = RX_RING_FULL;
       break;
     }
   } while (network.available());
@@ -283,28 +273,21 @@ uint8_t task;
 
 
 /**
- * Send a task from current Unit to the <node> Unit through the RF network
+ * Local function for network.write. Retries are limited to maxR 
  * 
- * @param [in] tskID        the task ID {GET_ALL, GET_DEV, SET_ACT, SET_DLT, GET_MSK, CNF_MSK}
- * @param [in] sensorID     the sensor or actuator code. See <sensorIDs> from common.h  
- * @param [in] tskval       the additional value needed to fulfil task  
- * @param [in] maxR         maximum nmber of retries when send through RF fails
- * @param [in] node         ID for the destination node
+ * @param [global] pp     payload
+ * @param [in]   header   the RF24 header to use for transfer
+ * @param [in] maxR       maximum number of retries when RF transfer fails
  * @return the status of RF transmition (success or error)
  */
-int sendTask(uint16_t taskID, uint32_t sensorID, float taskval, int maxR, uint16_t node) {
+static int send_loop( RF24NetworkHeader header, int maxR) {
 int  stat     = SEND_RETR_FAILED;
 int  retries  = 0;
-
-  RF24NetworkHeader header(node, taskID); // Send <taskID> to <node> Unit
-  
-  pp.IDnode = node;
-  pp.IDs = sensorID;
-  pp.value = taskval;
   
 #ifdef USE_DEBUG
   printf("Send task to node %d: SensorID=0x%04X  Task/Value=%f\n", pp.IDnode, pp.IDs, pp.value);
 #endif
+
   radio.stopListening();
   delay(1);
   while (retries < maxR){
@@ -325,12 +308,37 @@ int  retries  = 0;
     }
   }
   delay(1);
-  radio.startListening();  
+  radio.startListening();
+  return stat;
+}
+
+
+/**
+ * Send a task from current Unit to the <node> Unit through the RF network
+ * 
+ * @param [in] tskID        the task ID {GET_ALL, GET_DEV, SET_ACT, SET_DLT, GET_MSK, CNF_MSK}
+ * @param [in] sensorID     the sensor or actuator code. See <sensorIDs> from common.h  
+ * @param [in] tskval       the additional value needed to fulfil task  
+ * @param [in] maxR         maximum number of retries when RF transfer fails
+ * @param [in] node         ID for the destination node
+ * @return the status of RF transmition (success or error)
+ */
+int sendTask(uint16_t taskID, uint32_t sensorID, float taskval, int maxR, uint16_t node) {
+int  stat     = SEND_RETR_FAILED;
+int  retries  = 0;
+
+  RF24NetworkHeader header(node, taskID); // Send <taskID> to <node> Unit
+  
+  pp.IDnode = node;
+  pp.IDs = sensorID;
+  pp.value = taskval;
+  stat = send_loop(header, maxR);
   return stat;
 }
 
 
 int main(void) {
+int  l_stat;
 int  isr_n = -1;
 
   printf("[__DAPI__] sizeof(t_payload)=%d   sizeof(t_RX)=%d\n", sizeof(t_payload), sizeof(t_RX));
@@ -346,11 +354,10 @@ int  isr_n = -1;
   // attachInterrupt(pinRF, INT_EDGE_FALLING, f_rfISR); // RPi
   if(wiringPiISR(pinRF, INT_EDGE_FALLING, f_rfISR, NULL) < 0) { // wiringPi
     printf("Cannot setup interrupt on %d!\n", pinRF);
-    return EXIT_FAILURE; //__DAPI__ ce facem cand nu se initializeaza corect ?
+    return EXIT_FAILURE;
   } else
     printf("Interrupt setup ok!\n");
 
-  // __DAPI__ New setup without 'mesh' library 
   radio.begin();
   radio.setChannel(90);
   radio.maskIRQ(1,1,0);   // maskIRQ(bool_tx_ok, bool_tx_fail, bool_rx_ready) where 1 means disable (mask)
@@ -373,9 +380,9 @@ int  isr_n = -1;
   while (1) {
     g_cntr+=1;
 
-    /* __DAPI__ do we need a different checkSensors() for Master Unit?
-    g_stat = checkSensors();
-    if (g_stat != RET_SUCCESS) {
+    /* 
+    l_stat = checkSensors();
+    if (l_stat != RET_SUCCESS) {
       Do what?
       process sensor(s) info ...
     }
@@ -385,7 +392,7 @@ int  isr_n = -1;
     network.update();
       
     if (isr_n != isrRFcntr) {
-      printf("ISR cntr = %d\n", isrRFcntr);
+      printf("ISR cntr = %d\n  status = 0x%04X", isrRFcntr, g_stat);
       isr_n = isrRFcntr;
     }
 
@@ -394,20 +401,20 @@ int  isr_n = -1;
 #ifdef USE_DEBUG
       printf("\nPacket received.\n");
 #endif
-      g_stat = check_for_incoming_data();
+      l_stat = check_for_incoming_data();
       g_isrRF_ON = 0;
     }
 
     if (g_cntr == 400) {
-      g_stat = sendTask((uint16_t) SET_DLT, (uint32_t) SET_READ_TH, (float) 16, MAX_RETRIES, 01);
+      l_stat = sendTask((uint16_t) SET_DLT, (uint32_t) ID_Temperature, (float) 60000, MAX_RETRIES, 01);
     }
-    if (g_cntr == 1000) {
-      g_stat = sendTask((uint16_t) SET_DLT, (uint32_t) SET_READ_TH, (float)8, MAX_RETRIES, 01);
+    if (g_cntr == 4000) {
+      l_stat = sendTask((uint16_t) SET_DLT, (uint32_t) ID_Temperature, (float) 32000, MAX_RETRIES, 01);
     }   
-    if (g_cntr == 1500) {
-      g_stat = sendTask((uint16_t) GET_MSK, (uint32_t) ID_Temperature, (float) 0, MAX_RETRIES, 01);
+    if (g_cntr == 6000) {
+      l_stat = sendTask((uint16_t) GET_MSK, (uint32_t) ID_Temperature, (float) 0, MAX_RETRIES, 01);
     }       
-    if (g_cntr == 1600) {
+    if (g_cntr == 6100) {
       g_cntr = 0;
     }
     delayMicroseconds(250000); //250ms @TODO check with usleep
