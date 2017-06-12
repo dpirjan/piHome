@@ -71,34 +71,34 @@ using namespace std;
  * Types of available messages:
  *  - GET_ALL : From Master to Unit, it requests to forward all
  *              sensors values and actuators status.
- *              mesh.write msg_type="A" 0x41
+ *              network.write msg_type="A" 0x41
  *  - GET_DEV : From Master to Unit, it requests to get the value for 
  *              a given sensor or the status for actuator
- *              mesh.write msg_type="D" 0x44
+ *              network.write msg_type="D" 0x44
  *  - SET_ACT : From Master to Unit, it requests to drive an actuator
- *              mesh.write msg_type="C" 0x43
+ *              network.write msg_type="C" 0x43
  *  - GET_DLT : From Master to Unit, read the time step for a sensor/actuator
- *              mesh.write msg_type="R" 0x52              
+ *              network.write msg_type="R" 0x52
  *  - SND_DLT : From Unit to Master, send the time step for a sensor/actuator
- *              mesh.write msg_type="t" 0x74
+ *              network.write msg_type="t" 0x74
  *  - SET_DLT : From Master to Unit, set the time step for a sensor/actuator
- *              mesh.write msg_type="T" 0x54
+ *              network.write msg_type="T" 0x54
  *  - GET_MSK : From Master to Unit, it requests the sensor mask
  *              (if sensor value will be delivered)
- *              mesh.write msg_type="G" 0x47
+ *              network.write msg_type="G" 0x47
  *  - SND_MSK : From Unit to Master, return mask value for sensor
- *              mesh.write msg_type="m" 0x6D
+ *              network.write msg_type="m" 0x6D
  *  - CNF_MSK : From Master to Unit, configure mask value:
  *              val = 0 Sensor value isn't delivered (even when interrupt occours)
  *                      Remark:
  *                        When forced, the sensor value is sent to Master, means if
  *                        explicitly is requested then this task is prioritar
  *              val = 1 Sensor value is deliver without restriction
- *              mesh.write msg_type="M" 0x4D
+ *              network.write msg_type="M" 0x4D
  *  -SEND_VAL : From Unit to Master, respond with the sensor/actuator value
- *              mesh.write msg_type="V" 0x56
+ *              network.write msg_type="V" 0x56
  *  -SEND_ERR : From Unit to Master, return SUCCESS or ERROR No
- *              mesh.write msg_type="E" 0x45
+ *              network.write msg_type="E" 0x45
  */
 #define SEND_VAL             0x56   // "V"
 #define SEND_ERR             0x45   // "E"
@@ -162,19 +162,13 @@ using namespace std;
 
 // RF payload transmition:
 struct t_payload {
-  unsigned int IDs;           // sensor or actuator ID				(32 bits)
-  float         value;        // a) the value read from the sensor	(32 bits)
+  uint32_t  IDs;              // sensor or actuator ID				(32 bits)
+  float     value;            // a) the value read from the sensor	(32 bits)
                               // b) preset value for actuator
-  unsigned short int  IDnode; // node ID - redundant information	(16 bits)
+  uint16_t  IDnode;           // node ID - redundant information	(16 bits)
 } __attribute__((packed)) 
-  pp, *g_pp;                  // RF global buffer
+  pp;                         // RF global buffer
 
-// Time steps used to read/drive unit's devices
-struct t_dt {
-  unsigned int twd;           // step time for watchdog (default WDT_DT)
-  unsigned int tDHT22;        // no of watchdog steps to interogate temperature and humidity
-  unsigned int tPump;         // no of watchdog steps to drive water pump
-} g_dt;
 
 struct t_RX {
   int            newD;        // data is availlable to process
@@ -193,12 +187,6 @@ int g_stat = RET_SUCCESS;
 int rfIRQ = 1;
 volatile int isrRFcntr  = 0;  // only for debugging purposes [ToBeRemoved]
 int g_isrRF_ON = 0;           // RF packets available
-
-// Describe all sensors and actuators available for current Unit
-unsigned long g_UnitCapabilities = 0;
-
-// Global mask for sensors and actuators available for current Unit
-unsigned long g_UnitMask = 0;
 
 unsigned int  g_cntr = 0;     // only for debugging purposes [ToBeRemoved]
 
@@ -244,8 +232,9 @@ void f_rfISR(void *arg)       // wiringPi
  * @return the status (success or error)
  */
 int check_for_incoming_data(void) {
-int     tmpStat = RET_SUCCESS;
-uint8_t task; 
+int       tmpStat = RET_SUCCESS;
+uint8_t   task;
+t_payload *g_pp;
 
 #ifdef USE_DEBUG
   printf("Current RX stack: posRX=%d  head=%d\n", posRX, head);
@@ -280,7 +269,7 @@ uint8_t task;
  * @param [in] maxR       maximum number of retries when RF transfer fails
  * @return the status of RF transmition (success or error)
  */
-static int send_loop( RF24NetworkHeader header, int maxR) {
+int send_loop( RF24NetworkHeader header, int maxR) {
 int  stat     = SEND_RETR_FAILED;
 int  retries  = 0;
   
@@ -338,6 +327,7 @@ int  retries  = 0;
 
 
 int main(void) {
+t_payload *g_pp;
 int  l_stat;
 int  isr_n = -1;
 
